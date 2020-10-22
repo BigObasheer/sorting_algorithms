@@ -1,44 +1,50 @@
 #include "sort.h"
 
 /**
- * quick_sort - sorts an array of integers with the quick sort algorithm
- * @array: array to sort
+ * quick_sort - sorts int array w/ quick sort, prints each swap
+ * @array:  array
  * @size: size of array
- */
+ **/
 void quick_sort(int *array, size_t size)
 {
-	int tmp;
-	size_t i = -1, j;
+	int *hold, *low, *high, tmp;
+	size_t i;
+	static int first_call = 1;
+	static size_t len;
 
-	if (size < 2)
+	if (!array)
 		return;
-
-	for (j = 0; j < size - 1; j++)
+	if (first_call)
 	{
-		if (array[j] <= array[size - 1])
+		len = size;
+		first_call = 0;
+	}
+	hold = array + size - 1;
+	high = array;
+	low = NULL;
+	while (low != hold)
+	{
+		for (; high != hold && *high < *hold; high++)
+			;
+
+		if (high == hold)
 		{
-			i++;
-			if (i != j)
-			{
-				tmp = array[i];
-				array[i] = array[j];
-				array[j] = tmp;
-
-				print_array(array, size);
-			}
+			quick_sort(array, size - 1);
+			return;
 		}
+
+		for (low = hold; low != high && *low >= *hold; low--)
+			;
+
+		if (low == high)
+			low = hold;
+
+		tmp = *low;
+		*low = *high;
+		*high = tmp;
+		print_array(array, len);
 	}
-
-	if (i + 1 != size - 1)
-	{
-		tmp = array[i + 1];
-		array[i + 1] = array[size - 1];
-		array[size - 1] = tmp;
-
-		print_array(array, size);
-	}
-
-
-	quick_sort(array, i + 1);
-	quick_sort(array + (i + 1), size - i - 1);
+	for (i = 0; i < size - 1; i++)
+		if (array[i] > array[i + 1])
+			quick_sort(array, size);
 }
